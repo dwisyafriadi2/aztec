@@ -107,8 +107,8 @@ EOF
 # 4. Cek Blok
 function check_block_number() {
   echo -e "${CYAN}Block number proven:${RESET}"
-  curl -s -X POST -H 'Content-Type: application/json' \  
-    -d '{"jsonrpc":"2.0","method":"node_getL2Tips","params":[],"id":1}' \  
+  curl -s -X POST -H "Content-Type: application/json" \
+    -d '{"jsonrpc":"2.0","method":"node_getL2Tips","params":[],"id":1}' \
     http://localhost:8080 | jq -r '.result.proven.number'
   read -p "Tekan Enter..."
 }
@@ -116,8 +116,8 @@ function check_block_number() {
 # 5. Cek Archive Sibling Path
 function check_archive_sibling_path() {
   read -p "Block number: " bn
-  curl -s -X POST -H 'Content-Type: application/json' \  
-    -d '{"jsonrpc":"2.0","method":"node_getArchiveSiblingPath","params":["'"$bn"'","'"$bn"'"],"id":1}' \  
+  curl -s -X POST -H "Content-Type: application/json" \
+    -d '{"jsonrpc":"2.0","method":"node_getArchiveSiblingPath","params":["'"$bn"'","'"$bn"'"],"id":1}' \
     http://localhost:8080 | jq -r .result
   read -p "Tekan Enter..."
 }
@@ -134,7 +134,7 @@ function add_validator() {
   read -p "Validator Address: " ADDR
   aztec add-l1-validator --l1-rpc-urls "$RPC" --private-key "$PK" \
     --attester "$ADDR" --proposer-eoa "$ADDR" \
-    --staking-asset-handler 0xF739D03.... \
+    --staking-asset-handler 0xF739D03e98e23A7B65940848aBA8921fF3bAc4b2 \
     --l1-chain-id 11155111
   read -p "Tekan Enter..."
 }
@@ -169,6 +169,18 @@ function uninstall_all() {
   read -p "Tekan Enter..."
 }
 
+# 10. Stop Node
+function stop_node() {
+  PID=$(pgrep -f start_aztec_node.sh)
+  if [[ -n "$PID" ]]; then
+    kill $PID
+    echo -e "${YELLOW}Node dihentikan (PID: $PID).${RESET}"
+  else
+    echo -e "${RED}Node tidak ditemukan sedang berjalan.${RESET}"
+  fi
+  read -p "Tekan Enter..."
+}
+
 # Menu Utama
 function main_menu() {
   clear
@@ -182,6 +194,7 @@ function main_menu() {
 7) Run Sequencer Node
 8) Cek Logs
 9) Uninstall
+10) Stop Node
 0) Keluar${RESET}"
   read -p "Pilih menu: " opt
   case $opt in
@@ -194,6 +207,7 @@ function main_menu() {
     7) run_node;;
     8) check_logs;;
     9) uninstall_all;;
+    10) stop_node;;
     0) exit 0;;
     *) echo -e "${RED}Pilihan tidak valid!${RESET}"; sleep 1;;
   esac
