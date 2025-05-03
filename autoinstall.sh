@@ -73,12 +73,16 @@ function install_sequencer_node() {
   export PATH="$HOME/.aztec/bin:$PATH"
 
   echo -e "${CYAN}Inisialisasi alpha-testnet...${RESET}"
-  command -v aztec &>/dev/null || { echo -e "${YELLOW}Pastikan \$HOME/.aztec/bin di PATH.${RESET}"; read -p "Tekan Enter..."; return; }
-  aztec up alpha-testnet
+  if ! command -v aztec-up &>/dev/null; then
+    echo -e "${YELLOW}Pastikan \$HOME/.aztec/bin di PATH.${RESET}"
+    read -p "Tekan Enter untuk kembali ke menu utama..."
+    return
+  fi
+  aztec-up alpha-testnet
 
   IP=$(curl -s https://api.ipify.org)
-  read -p "RPC URL Sepolia: " L1_RPC_URL
-  read -p "Beacon URL Sepolia: " L1_CONSENSUS_URL
+  read -p "RPC URL ETH Sepolia: " L1_RPC_URL
+  read -p "Beacon URL ETH Sepolia: " L1_CONSENSUS_URL
   read -p "Validator Private Key: " VALIDATOR_PRIVATE_KEY
   read -p "Coinbase Address: " COINBASE_ADDRESS
   cat > ~/start_aztec_node.sh <<EOF
@@ -121,9 +125,10 @@ function check_archive_sibling_path() {
 function add_validator() {
   if ! command -v aztec &>/dev/null; then
     echo -e "${RED}Aztec CLI belum terinstal. Jalankan instalasi Sequencer Node!${RESET}"
-    read -p "Tekan Enter..."; return
+    read -p "Tekan Enter..."
+    return
   fi
-  read -p "RPC URL Sepolia: " RPC
+  read -p "RPC URL ETH Sepolia: " RPC
   read -p "Private Key: " PK
   read -p "Validator Address: " ADDR
   aztec add-l1-validator --l1-rpc-urls "$RPC" --private-key "$PK" \
@@ -167,7 +172,16 @@ function uninstall_all() {
 function main_menu() {
   clear
   declare -f logo &>/dev/null && logo
-  echo -e "${LIGHT_CYAN}1) Install Docker\n2) Install Dependencies\n3) Install Sequencer Node\n4) Cek Blok\n5) Cek Archive Sibling Path\n6) Add Validator\n7) Run Sequencer Node\n8) Cek Logs\n9) Uninstall\n0) Keluar${RESET}"
+  echo -e "${LIGHT_CYAN}1) Install Docker
+2) Install Dependencies
+3) Install Sequencer Node
+4) Cek Blok
+5) Cek Archive Sibling Path
+6) Add Validator
+7) Run Sequencer Node
+8) Cek Logs
+9) Uninstall
+0) Keluar${RESET}"
   read -p "Pilih menu: " opt
   case $opt in
     1) install_docker;;
