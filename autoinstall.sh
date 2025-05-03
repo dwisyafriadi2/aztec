@@ -166,9 +166,6 @@ function check_logs() {
 }
 
 function main_menu() {
-  clear
-  echo -e "${LIGHT_CYAN}===============================${RESET}"
-  # Tampilkan logo
   if declare -f logo &>/dev/null; then
     logo
   fi
