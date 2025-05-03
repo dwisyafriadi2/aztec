@@ -168,7 +168,10 @@ function check_logs() {
 function main_menu() {
   clear
   echo -e "${LIGHT_CYAN}===============================${RESET}"
-  # Logo akan tampil otomatis dari logo.sh
+  # Tampilkan logo
+  if declare -f logo &>/dev/null; then
+    logo
+  fi
   echo -e "${LIGHT_CYAN}===============================${RESET}"
   PS3="Pilih menu: "
   options=("Install Aztec Node" "Cek Block Number" "Cek Archive Sibling Path" "Tambah Validator" "Masuk ke Screen untuk Cek Logs" "Uninstall Aztec Node" "Keluar")
@@ -206,7 +209,7 @@ function main_menu() {
               ;;
           *)
               echo -e "${RED}Pilihan tidak valid!${RESET}"
-              ;;
+              ;;  
       esac
   done
 }
