@@ -60,7 +60,6 @@ function install_dependencies() {
 }
 
 # 3. Install Sequencer Node
-echo_warn_path() { echo -e "${YELLOW}Pastikan \$HOME/.aztec/bin di PATH.${RESET}"; }
 function install_sequencer_node() {
   echo -e "${CYAN}Install & setup Sequencer Node...${RESET}"
   if [ -d "$HOME/.aztec/alpha-testnet" ]; then
@@ -68,18 +67,15 @@ function install_sequencer_node() {
   fi
   mkdir -p ~/.aztec/bin
   curl -fsSL https://install.aztec.network | bash
-  # register PATH permanen
   grep -qxF 'export PATH="$HOME/.aztec/bin:$PATH"' ~/.bashrc || \
     echo 'export PATH="$HOME/.aztec/bin:$PATH"' >> ~/.bashrc
   source ~/.bashrc
   export PATH="$HOME/.aztec/bin:$PATH"
 
-  # Init network
   echo -e "${CYAN}Inisialisasi alpha-testnet...${RESET}"
-  command -v aztec >/dev/null || { echo_warn_path; return; }
+  command -v aztec &>/dev/null || { echo -e "${YELLOW}Pastikan \$HOME/.aztec/bin di PATH.${RESET}"; read -p "Tekan Enter..."; return; }
   aztec up alpha-testnet
 
-  # Persiapan start script
   IP=$(curl -s https://api.ipify.org)
   read -p "RPC URL Sepolia: " L1_RPC_URL
   read -p "Beacon URL Sepolia: " L1_CONSENSUS_URL
@@ -169,17 +165,9 @@ function uninstall_all() {
 
 # Menu Utama
 function main_menu() {
-  clear; declare -f logo &>/dev/null && logo
-  echo -e "${LIGHT_CYAN}1) Install Docker"
-2) Install Dependencies
-3) Install Sequencer Node
-4) Cek Blok
-5) Cek Archive Sibling Path
-6) Add Validator
-7) Run Sequencer Node
-8) Cek Logs
-9) Uninstall
-0) Keluar${RESET}"
+  clear
+  declare -f logo &>/dev/null && logo
+  echo -e "${LIGHT_CYAN}1) Install Docker\n2) Install Dependencies\n3) Install Sequencer Node\n4) Cek Blok\n5) Cek Archive Sibling Path\n6) Add Validator\n7) Run Sequencer Node\n8) Cek Logs\n9) Uninstall\n0) Keluar${RESET}"
   read -p "Pilih menu: " opt
   case $opt in
     1) install_docker;;
@@ -192,7 +180,7 @@ function main_menu() {
     8) check_logs;;
     9) uninstall_all;;
     0) exit 0;;
-    *) echo "Pilihan tidak valid"; sleep 1;;
+    *) echo -e "${RED}Pilihan tidak valid!${RESET}"; sleep 1;;
   esac
   main_menu
 }
