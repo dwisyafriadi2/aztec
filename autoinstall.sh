@@ -89,21 +89,20 @@ function install_sequencer_node() {
   cat > ~/start_aztec_node.sh <<EOF
 #!/bin/bash
 export PATH=\$HOME/.aztec/bin:\$PATH
-exec aztec start --node --archiver --sequencer \\
-  --network alpha-testnet \\
-  --port 8080 \\
-  --l1-rpc-urls $L1_RPC_URL \\
-  --l1-consensus-host-urls $L1_CONSENSUS_URL \\
-  --sequencer.validatorPrivateKey $VALIDATOR_PRIVATE_KEY \\
-  --sequencer.coinbase $COINBASE_ADDRESS \\
-  --p2p.p2pIp $IP \\
+exec aztec start --node --archiver --sequencer \
+  --network alpha-testnet \
+  --port 8080 \
+  --l1-rpc-urls $L1_RPC_URL \
+  --l1-consensus-host-urls $L1_CONSENSUS_URL \
+  --sequencer.validatorPrivateKey $VALIDATOR_PRIVATE_KEY \
+  --sequencer.coinbase $COINBASE_ADDRESS \
+  --p2p.p2pIp $IP \
   --p2p.maxTxPoolSize 10000
 EOF
   chmod +x ~/start_aztec_node.sh
   echo -e "${LIGHT_GREEN}Setup selesai. Gunakan menu 'Run Sequencer Node' untuk jalankan node.${RESET}"
   read -p "Tekan Enter untuk kembali ke menu utama..."
 }
-
 
 # 4. Cek Blok
 function check_block_number() {
