@@ -60,7 +60,7 @@ function install_dependencies() {
 }
 
 # 3. Install Sequencer Node
-function install_sequencer_node() {
+tunction install_sequencer_node() {
   echo -e "${CYAN}Install & setup Sequencer Node...${RESET}"
   if [ -d "$HOME/.aztec/alpha-testnet" ]; then
     rm -rf "$HOME/.aztec/alpha-testnet"
@@ -85,10 +85,11 @@ function install_sequencer_node() {
   read -p "Beacon URL ETH Sepolia: " L1_CONSENSUS_URL
   read -p "Validator Private Key: " VALIDATOR_PRIVATE_KEY
   read -p "Coinbase Address: " COINBASE_ADDRESS
+
   cat > ~/start_aztec_node.sh <<EOF
 #!/bin/bash
 export PATH=\$HOME/.aztec/bin:\$PATH
-aztec start --node --archiver --sequencer \
+exec aztec start --node --archiver --sequencer \
   --network alpha-testnet \
   --port 8080 \
   --l1-rpc-urls $L1_RPC_URL \
@@ -99,15 +100,15 @@ aztec start --node --archiver --sequencer \
   --p2p.maxTxPoolSize 10000
 EOF
   chmod +x ~/start_aztec_node.sh
-  echo -e "${LIGHT_GREEN}Setup selesai. Gunakan menu 'Run' untuk jalankan node.${RESET}"
+  echo -e "${LIGHT_GREEN}Setup selesai. Gunakan menu 'Run Sequencer Node' untuk jalankan node.${RESET}"
   read -p "Tekan Enter untuk kembali ke menu utama..."
 }
 
 # 4. Cek Blok
 function check_block_number() {
   echo -e "${CYAN}Block number proven:${RESET}"
-  curl -s -X POST -H 'Content-Type: application/json' \
-    -d '{"jsonrpc":"2.0","method":"node_getL2Tips","params":[],"id":1}' \
+  curl -s -X POST -H 'Content-Type: application/json' \  
+    -d '{"jsonrpc":"2.0","method":"node_getL2Tips","params":[],"id":1}' \  
     http://localhost:8080 | jq -r '.result.proven.number'
   read -p "Tekan Enter..."
 }
@@ -115,8 +116,8 @@ function check_block_number() {
 # 5. Cek Archive Sibling Path
 function check_archive_sibling_path() {
   read -p "Block number: " bn
-  curl -s -X POST -H 'Content-Type: application/json' \
-    -d '{"jsonrpc":"2.0","method":"node_getArchiveSiblingPath","params":["'"$bn"'","'"$bn"'"],"id":1}' \
+  curl -s -X POST -H 'Content-Type: application/json' \  
+    -d '{"jsonrpc":"2.0","method":"node_getArchiveSiblingPath","params":["'"$bn"'","'"$bn"'"],"id":1}' \  
     http://localhost:8080 | jq -r .result
   read -p "Tekan Enter..."
 }
